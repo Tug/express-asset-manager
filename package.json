@@ -1,0 +1,22 @@
+{
+  "name": "express-asset-manager",
+  "description": "Simple asset manager middleware for Express.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Tug/express-asset-manager",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Tug/express-asset-manager.git"
+  },
+  "author": "Tugdual de Kerviler <dekervit@gmail.com>",
+  "main": "./lib/assetmanager.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "node-minify": "~0.7.2"
+  },
+  "devDependencies": {}
+}

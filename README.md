@@ -1,4 +1,4 @@
-asset-manager
+express-asset-manager
 =============
 
-Simple and easy to integrate asset manager for Node.js app
+Simple and easy to integrate asset manager for Express.js applications
