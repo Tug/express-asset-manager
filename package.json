@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "node-minify": "~0.7.2",
-    "step": "0.0.5"
+    "step": "0.0.5",
+    "debug": "~0.7.2"
   },
   "devDependencies": {}
 }
