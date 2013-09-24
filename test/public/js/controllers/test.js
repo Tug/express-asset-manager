@@ -1,4 +1,4 @@
-define(['jquery'], function($, require, exports, module) {
+define(['jquery'], function($) {
     return {
         jQueryVersion: function() {
             return $.fn.jquery;
