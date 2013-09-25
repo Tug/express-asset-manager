@@ -109,9 +109,10 @@ Simple and easy to integrate asset manager for Express.js applications
         },
         "style.css" : {
             type: "less",
-            route: "/static/css",
+            route: "/static/less",
             dir: "test/public/less",
-            main: "style.less"
+            main: "style.less",
+            lib: "../lib/less.js"
         }
     };
     app.use(require("express-asset-manager")(assets, { buildDir: './builtAssets' }));
@@ -126,7 +127,8 @@ Simple and easy to integrate asset manager for Express.js applications
         app.use(express.static('/static/js', './builtAssets'));
         app.use(express.static('/static/less', './builtAssets'));
     });
-    
+
+   
 In your views :
 
     <!DOCTYPE html>
@@ -138,3 +140,33 @@ In your views :
         <%-body -%>
         <%- asset("app.js") %>
     </body>
+    
+    
+Resulting page in development :
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <script src="/static/lib/less.js" type="text/javascript"></script>
+        <link href="/static/less/style.less" rel="stylesheet/less" type="text/css"/>
+    </head>
+    <body>
+        <%-body -%>
+        <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
+        <script src="/static/js/config.js" type="text/javascript"></script>
+    </body>
+
+
+Resulting page in production :
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <link href="/static/less/style.css" type="text/css"/>
+    </head>
+    <body>
+        <%-body -%>
+        <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
+    </body>
+    
+    
