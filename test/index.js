@@ -3,12 +3,12 @@ var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var libRoot = path.join(__dirname, '..');
-var outputDir = "./test/builtAssets";
+var outputDir = path.join(libRoot, "test/builtAssets");
 global.application_root = __dirname;
 
 describe('AssetMiddleWare', function() {
 
-    var expressAssetMiddleware = require(path.join(libRoot, 'lib/assetmanager'));
+    var expressAssetMiddleware = require(path.join(libRoot, 'lib/index'));
     var middlewareConf = {
         buildDir: './test/builtAssets',
         env: "production"
@@ -72,7 +72,7 @@ describe('AssetMiddleWare', function() {
             });
         });
     });
-
+/*
     after(function(done) {
         var files = [];
         if(fs.existsSync(outputDir)) {
@@ -85,6 +85,6 @@ describe('AssetMiddleWare', function() {
         }
         done();
     });
-
+*/
 });
 
