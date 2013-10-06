@@ -23,7 +23,7 @@ describe('AssetMiddleWare', function() {
     it('should process js assets with requirejs in production mode', function(done) {
         var middleware = expressAssetMiddleware({
             "app.js" : {
-                type: "js",
+                type: "requirejs",
                 route: "/static/js",
                 dir: "test/public/js",
                 main: "app",
@@ -42,7 +42,7 @@ describe('AssetMiddleWare', function() {
     it('should process css assets with requirejs in production mode', function(done) {
         var middleware = expressAssetMiddleware({
             "ui.css": {
-                type: "css",
+                type: "requirejs-css",
                 route: "/static/css",
                 dir: "test/public/css",
                 main: "style.css"
