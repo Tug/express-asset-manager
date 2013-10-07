@@ -24,152 +24,159 @@ Simple and easy to integrate asset manager for Express.js applications
 
 
 ### JS (default)
-
-    {
-        "app.js" : {
-            type: "js",
-            route: "/static/js",
-            dir: "test/public/js",
-            files: [
-                "../lib/jquery-1.9.1.js",
-                "../lib/jquery.eventemitter.js",
-                "../lib/knockout-2.2.1.js",
-                "app.js",
-                "models/User.js",
-                "controllers/user.js",
-            ]
-        }
+```js
+{
+    "app.js" : {
+        type: "js",
+        route: "/static/js",
+        dir: "test/public/js",
+        files: [
+            "../lib/jquery-1.9.1.js",
+            "../lib/jquery.eventemitter.js",
+            "../lib/knockout-2.2.1.js",
+            "app.js",
+            "models/User.js",
+            "controllers/user.js",
+        ]
     }
-    
+}
+```
+
 ### JS with AMD
-
-    {
-        "app.js" : {
-            type: "js",
-            route: "/static/js",
-            dir: "test/public/js",
-            main: "app",
-            mainConfigFile: "config.js",
-            lib: "../lib/require.js"
-        }
+```js
+{
+    "app.js" : {
+        type: "js",
+        route: "/static/js",
+        dir: "test/public/js",
+        main: "app",
+        mainConfigFile: "config.js",
+        lib: "../lib/require.js"
     }
-    
+}
+```
+
 ### CSS (default)
-
-    {
-        "style.css" : {
-            type: "css",
-            route: "/static/js",
-            dir: "test/public/js",
-            files: [
-                "bootstrap.min.css",
-                "bootstrap-responsive.min.css",
-                "style.css",
-                "style-responsive.css"
-            ]
-        }
+```js
+{
+    "style.css" : {
+        type: "css",
+        route: "/static/js",
+        dir: "test/public/js",
+        files: [
+            "bootstrap.min.css",
+            "bootstrap-responsive.min.css",
+            "style.css",
+            "style-responsive.css"
+        ]
     }
+}
+```
 
 ### CSS with @import
-
-    {
-        "style.css" : {
-            type: "css",
-            route: "/static/css",
-            dir: "test/public/css",
-            main: "style.css"
-        }
+```js
+{
+    "style.css" : {
+        type: "css",
+        route: "/static/css",
+        dir: "test/public/css",
+        main: "style.css"
     }
+}
+```
 
 It uses requirejs to inline in production.
 
 
 ### Less and Less with @import
-
-    {
-        "style.css" : {
-            type: "less",
-            route: "/static/less",
-            dir: "test/public/less",
-            main: "style.less"
-        }
+```js
+{
+    "style.css" : {
+        type: "less",
+        route: "/static/less",
+        dir: "test/public/less",
+        main: "style.less"
     }
+}
+```
 
 You need to write `@import (less)` to inline CSS files in production.
 
 
     
 ## Exemple of usage
+```js
+var assets = {
+    "app.js" : {
+        type: "js",
+        route: "/static/js",
+        dir: "test/public/js",
+        main: "app",
+        mainConfigFile: "config.js",
+        lib: "../lib/require.js"
+    },
+    "style.css" : {
+        type: "less",
+        route: "/static/less",
+        dir: "test/public/less",
+        main: "style.less",
+        lib: "../lib/less.js"
+    }
+};
+app.use(require("express-asset-manager")(assets, { buildDir: './builtAssets' }));
 
-    var assets = {
-        "app.js" : {
-            type: "js",
-            route: "/static/js",
-            dir: "test/public/js",
-            main: "app",
-            mainConfigFile: "config.js",
-            lib: "../lib/require.js"
-        },
-        "style.css" : {
-            type: "less",
-            route: "/static/less",
-            dir: "test/public/less",
-            main: "style.less",
-            lib: "../lib/less.js"
-        }
-    };
-    app.use(require("express-asset-manager")(assets, { buildDir: './builtAssets' }));
-    
-    app.configure('development', function() {
-        app.use(express.static('/static', './public'));
-    });
-    
-    // in production, use a reverse proxy instead
-    app.configure('production', function() {
-        app.use(express.static('/static/lib', './builtAssets'));
-        app.use(express.static('/static/js', './builtAssets'));
-        app.use(express.static('/static/less', './builtAssets'));
-    });
+app.configure('development', function() {
+    app.use(express.static('/static', './public'));
+});
+
+// in production, use a reverse proxy instead
+app.configure('production', function() {
+    app.use(express.static('/static/lib', './builtAssets'));
+    app.use(express.static('/static/js', './builtAssets'));
+    app.use(express.static('/static/less', './builtAssets'));
+});
+```
 
    
 In your views :
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- asset("style.css") %>
+</head>
+<body>
+    <%-body -%>
+    <%- asset("app.js") %>
+</body>
+```
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <%- asset("style.css") %>
-    </head>
-    <body>
-        <%-body -%>
-        <%- asset("app.js") %>
-    </body>
-    
-    
 Resulting page in development :
-
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <script src="/static/lib/less.js" type="text/javascript"></script>
-        <link href="/static/less/style.less" rel="stylesheet/less" type="text/css"/>
-    </head>
-    <body>
-        <%-body -%>
-        <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
-        <script src="/static/js/config.js" type="text/javascript"></script>
-    </body>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/static/lib/less.js" type="text/javascript"></script>
+    <link href="/static/less/style.less" rel="stylesheet/less" type="text/css"/>
+</head>
+<body>
+    <%-body -%>
+    <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
+    <script src="/static/js/config.js" type="text/javascript"></script>
+</body>
+```
 
 
 Resulting page in production :
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="/static/less/style.css" type="text/css"/>
+</head>
+<body>
+    <%-body -%>
+    <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
+</body>
+```
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <link href="/static/less/style.css" type="text/css"/>
-    </head>
-    <body>
-        <%-body -%>
-        <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
-    </body>
-    
-    
