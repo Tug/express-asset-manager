@@ -70,7 +70,7 @@ Simple and easy to integrate asset manager for Express.js applications
         }
     }
 
-### CSS with @import (uses requirejs)
+### CSS with @import
 
     {
         "style.css" : {
@@ -80,6 +80,8 @@ Simple and easy to integrate asset manager for Express.js applications
             main: "style.css"
         }
     }
+
+It uses requirejs to inline in production.
 
 
 ### Less and Less with @import
@@ -93,6 +95,7 @@ Simple and easy to integrate asset manager for Express.js applications
         }
     }
 
+You need to write `@import (less)` to inline CSS files in production.
 
 
     
