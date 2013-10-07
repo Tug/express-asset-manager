@@ -102,7 +102,7 @@ describe('Asset Middleware in production', function() {
                     var html = res.locals.asset("app.js");
                     assert.ok( html.indexOf('<script ') !== -1 );
                     assert.ok( html.indexOf(' src="/static/lib/require.js"') !== -1 );
-                    assert.ok( html.indexOf(' data-main="/static/js/app"') !== -1 );
+                    assert.ok( html.indexOf(' data-main="app"') !== -1 );
                     assert.ok( html.indexOf(' type="text/javascript"') !== -1 );
                     assert.ok( html.indexOf('</script>') !== -1 );
                     done();
@@ -135,7 +135,7 @@ describe('Asset Middleware in production', function() {
                     assert.ok( html.indexOf('<script ') !== -1 );
                     assert.ok( html.indexOf(' src="/static/js/app2.js"') !== -1 );
                     assert.ok( html.indexOf(' async ') !== -1 );
-                    assert.ok( html.indexOf(' data-main="/static/js/app2"') === -1 );
+                    assert.ok( html.indexOf(' data-main="app"') === -1 );
                     assert.ok( html.indexOf(' src="/static/lib/require.js"') === -1 );
                     assert.ok( html.indexOf(' type="text/javascript"') !== -1 );
                     assert.ok( html.indexOf('</script>') !== -1 );
@@ -165,7 +165,7 @@ describe('Asset Middleware in production', function() {
                     var html = res.locals.asset("app3.js", { prefix: "http://files.mydomain.com/" });
                     assert.ok( html.indexOf('<script ') !== -1 );
                     assert.ok( html.indexOf(' src="http://files.mydomain.com/static/lib/require.js"') !== -1 );
-                    assert.ok( html.indexOf(' data-main="http://files.mydomain.com/static/js/app"') !== -1 );
+                    assert.ok( html.indexOf(' data-main="app"') !== -1 );
                     assert.ok( html.indexOf(' type="text/javascript"') !== -1 );
                     assert.ok( html.indexOf('</script>') !== -1 );
                     done();
