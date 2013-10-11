@@ -397,7 +397,7 @@ describe('Asset Middleware in development', function() {
                 var html = res.locals.asset("ui2.css");
                 assert.ok( html.indexOf('<link ') !== -1 );
                 assert.ok( html.indexOf(' href="/static/less/style.less" ') !== -1 );
-                assert.ok( html.indexOf(' rel="stylesheet/less"') === -1 );
+                assert.ok( html.indexOf(' rel="stylesheet/less"') !== -1 );
                 assert.ok( html.indexOf(' type="text/css"') !== -1 );
                 assert.ok( html.match(/<script /g).length === 1 );
                 assert.ok( html.indexOf(' src="/static/lib/less.js"') !== -1 );

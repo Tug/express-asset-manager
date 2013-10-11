@@ -100,7 +100,7 @@ It uses requirejs to inline in production.
 }
 ```
 
-You need to write `@import (less)` to inline CSS files in production.
+You need to write `@import (inline)` to inline CSS files in production.
 
 
     
