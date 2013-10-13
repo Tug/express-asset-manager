@@ -28,8 +28,7 @@ Simple and easy to integrate asset manager for Express.js applications
 {
     "app.js" : {
         type: "js",
-        route: "/static/js",
-        dir: "test/public/js",
+        dir: "js",
         files: [
             "../lib/jquery-1.9.1.js",
             "../lib/jquery.eventemitter.js",
@@ -47,10 +46,8 @@ Simple and easy to integrate asset manager for Express.js applications
 {
     "app.js" : {
         type: "js",
-        route: "/static/js",
-        dir: "test/public/js",
-        main: "app",
-        mainConfigFile: "config.js",
+        dir: "js",
+        main: "app.js"
         lib: "../lib/require.js"
     }
 }
@@ -61,8 +58,7 @@ Simple and easy to integrate asset manager for Express.js applications
 {
     "style.css" : {
         type: "css",
-        route: "/static/js",
-        dir: "test/public/js",
+        dir: "css",
         files: [
             "bootstrap.min.css",
             "bootstrap-responsive.min.css",
@@ -78,8 +74,7 @@ Simple and easy to integrate asset manager for Express.js applications
 {
     "style.css" : {
         type: "css",
-        route: "/static/css",
-        dir: "test/public/css",
+        dir: "css",
         main: "style.css"
     }
 }
@@ -93,8 +88,7 @@ It uses requirejs to inline in production.
 {
     "style.css" : {
         type: "less",
-        route: "/static/less",
-        dir: "test/public/less",
+        dir: "less",
         main: "style.less"
     }
 }
@@ -109,21 +103,23 @@ You need to write `@import (inline)` to inline CSS files in production.
 var assets = {
     "app.js" : {
         type: "js",
-        route: "/static/js",
-        dir: "test/public/js",
-        main: "app",
-        mainConfigFile: "config.js",
+        dir: "js",
+        main: "app.js",
         lib: "../lib/require.js"
     },
     "style.css" : {
         type: "less",
-        route: "/static/less",
-        dir: "test/public/less",
+        dir: "less",
         main: "style.less",
         lib: "../lib/less.js"
     }
 };
-app.use(require("express-asset-manager")(assets, { buildDir: './builtAssets' }));
+var assetManagerConfig = {
+    rootRoute   : "/static",
+    srcDir      : "./public",
+    buildDir    : "./builtAssets"
+};
+app.use(require("express-asset-manager")(assets, assetManagerConfig));
 
 app.configure('development', function() {
     app.use(express.static('/static', './public'));
@@ -131,9 +127,7 @@ app.configure('development', function() {
 
 // in production, use a reverse proxy instead
 app.configure('production', function() {
-    app.use(express.static('/static/lib', './builtAssets'));
-    app.use(express.static('/static/js', './builtAssets'));
-    app.use(express.static('/static/less', './builtAssets'));
+    app.use(express.static('/static', './builtAssets'));
 });
 ```
 
@@ -156,13 +150,12 @@ Resulting page in development :
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="/static/lib/less.js" type="text/javascript"></script>
     <link href="/static/less/style.less" rel="stylesheet/less" type="text/css"/>
+    <script src="/static/lib/less.js" type="text/javascript"></script>
 </head>
 <body>
     <%-body -%>
     <script src="/static/lib/require.js" data-main="/static/js/app" type="text/javascript"></script>
-    <script src="/static/js/config.js" type="text/javascript"></script>
 </body>
 ```
 
@@ -180,3 +173,5 @@ Resulting page in production :
 </body>
 ```
 
+At application startup, `./public/js/app.js` will be read and processed by require.js optimizer.
+Output is saved in `./builtAssets/js/app.js`.

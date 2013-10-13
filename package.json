@@ -20,7 +20,8 @@
     "step": "0.0.5",
     "debug": "~0.7.2",
     "requirejs": "~2.1.8",
-    "less": "~1.4.2"
+    "less": "https://github.com/less/less.js/tarball/master",
+    "fs-extra": "~0.7.0"
   },
   "devDependencies": {
     "mocha": "~1.13.0"
