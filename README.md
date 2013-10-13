@@ -175,4 +175,3 @@ Resulting page in production :
 
 At application startup, `./public/js/app.js` will be read and processed by require.js optimizer.
 Output is saved in `./builtAssets/js/app.js`.
-
