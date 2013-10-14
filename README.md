@@ -3,6 +3,13 @@ express-asset-manager
 
 Simple and easy to integrate asset manager for Express.js applications
 
+## Installation
+
+
+    npm install express-asset-manager
+
+
+
 ## Features :
 
 - Transparent asset management.
