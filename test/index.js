@@ -234,6 +234,28 @@ describe('Asset Middleware in production', function() {
         });
     });
 
+    it('should copy files and folders specified in options.copy', function(done) {
+        var middlewareCustomConf = {
+            env         : "development",
+            rootRoute   : "/static",
+            srcDir      : "./test/public",
+            buildDir    : "./test/builtAssets",
+            copy        : [ "img", "font" ]
+        };
+        var middleware = expressAssetMiddleware({}, middlewareCustomConf, function(err) {
+            if(err) return done(err);
+            var image = path.join(middlewareCustomConf.buildDir, "img", "subdir", "pixel.png");
+            var font = path.join(middlewareCustomConf.buildDir, "font", "nofonthere.ttf");
+            fs.readFile(image, "utf8", function(err, content) {
+                assert.ok( content.length > 0 );
+                fs.readFile(font, "utf8", function(err, content) {
+                    assert.ok( content.length > 0 );
+                    done();
+                });
+            });
+        });
+    });
+
     after(function(done) {
         fs.remove(outputDir, done);
     });
