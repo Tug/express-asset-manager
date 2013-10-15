@@ -1,5 +1,5 @@
 requirejs.config({
-    baseUrl: '/static/js',
+    baseUrl: '.',
     paths: {
         'jquery': '../lib/jquery.test'
     }
