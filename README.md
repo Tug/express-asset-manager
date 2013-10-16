@@ -124,7 +124,8 @@ var assets = {
 var assetManagerConfig = {
     rootRoute   : "/static",
     srcDir      : "./public",
-    buildDir    : "./builtAssets"
+    buildDir    : "./builtAssets",
+    process     : "true"
 };
 app.use(require("express-asset-manager")(assets, assetManagerConfig));
 
