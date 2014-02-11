@@ -54,8 +54,10 @@ Simple and easy to integrate asset manager for Express.js applications
     "app.js" : {
         type: "js",
         dir: "js",
-        main: "app.js"
-        lib: "../lib/require.js"
+        main: "app.js",
+        lib: "../lib/require.js",
+        mainConfigFile: "config.js", // optional, relative to `dir`
+        includeLib: true // optional, default: false, include requirejs in the processed file 
     }
 }
 ```
@@ -96,7 +98,8 @@ It uses requirejs to inline in production.
     "style.css" : {
         type: "less",
         dir: "less",
-        main: "style.less"
+        main: "style.less",
+        lib: "../lib/less.js" // path to `less.js` to parse .less assets in the browser in dev env
     }
 }
 ```
