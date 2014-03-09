@@ -21,7 +21,9 @@
     "debug": "~0.7.2",
     "requirejs": "~2.1.8",
     "less": "https://github.com/less/less.js/tarball/master",
-    "fs-extra": "~0.7.0"
+    "fs-extra": "~0.7.0",
+    "glob": "~3.2.9",
+    "sandboxed-module": "~0.3.0"
   },
   "devDependencies": {
     "mocha": "~1.13.0"
