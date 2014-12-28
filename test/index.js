@@ -3,7 +3,6 @@ var fs = require('fs-extra');
 var path = require('path');
 var libRoot = path.join(__dirname, '..');
 var outputDir = path.join(libRoot, "test/builtAssets");
-global.application_root = __dirname;
 
 
 String.prototype.doesContain = function(subString) {
@@ -25,8 +24,8 @@ describe('Asset Middleware in production', function() {
     var middlewareConf = {
         env         : "production",
         rootRoute   : "/static",
-        srcDir      : "./test/public",
-        buildDir    : "./test/builtAssets"
+        srcDir      : path.join(__dirname, "public"),
+        buildDir    : path.join(__dirname, "builtAssets")
     };
 
     it('should process JS assets using concatenation and minification in production', function(done) {

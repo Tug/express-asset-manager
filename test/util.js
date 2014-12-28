@@ -3,8 +3,6 @@ var assert = require('assert');
 var path = require('path');
 var util = require('../lib/util');
 
-global.application_root = __dirname;
-
 describe('util.routeJoin', function() {
 
     it('should join 2 simple route', function() {
