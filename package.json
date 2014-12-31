@@ -1,7 +1,7 @@
 {
   "name": "express-asset-manager",
   "description": "Simple asset manager middleware for Express.js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "homepage": "https://github.com/Tug/express-asset-manager",
   "repository": {
     "type": "git",
