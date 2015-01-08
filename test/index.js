@@ -39,18 +39,21 @@ describe('Asset Middleware in production', function() {
                     "app.js",
                     "controllers/test.js"
                 ],
-                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "all.js.map")]
+                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "all.js.map")],
+                fingerprint: true
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "js", "all.js"), "utf8", function(err, content) {
+            var md5Hash = "4057a108527a98e65a6b72ae786a3463";
+            var fileName = md5Hash+"-all.js";
+            fs.readFile(path.join(middlewareConf.buildDir, "js", fileName), "utf8", function(err, content) {
                 if(err) return done(err);
                 assert.ok( content.length > 0 );
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("all.js");
                     assert.ok( html.doesContain('<script ') );
-                    assert.ok( html.doesContain(' src="/static/js/all.js" ') );
+                    assert.ok( html.doesContain(' src="/static/js/'+fileName+'" ') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
                     fs.readFile(path.join(middlewareConf.buildDir, "js", "all.js.map"), "utf8", function(err, content) {
@@ -97,8 +100,7 @@ describe('Asset Middleware in production', function() {
                 type: "requirejs",
                 dir: "js",
                 main: "app.js",
-                lib: "../lib/require.js",
-                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "app.js.map")]
+                lib: "../lib/require.js"
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
@@ -114,12 +116,8 @@ describe('Asset Middleware in production', function() {
                     assert.ok( html.doesContain(' data-main="/static/js/app"') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
-                    fs.readFile(path.join(middlewareConf.buildDir, "js", "app.js.map"), "utf8", function(err, content) {
-                        if(err) return done(err);
-                        assert.ok( content.length > 0 );
-                        done();
-                    });
-                })
+                    done();
+                });
             });
         });
     });
