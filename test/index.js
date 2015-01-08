@@ -38,7 +38,8 @@ describe('Asset Middleware in production', function() {
                     "../lib/jquery.test.js",
                     "app.js",
                     "controllers/test.js"
-                ]
+                ],
+                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "all.js.map")]
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
@@ -52,7 +53,11 @@ describe('Asset Middleware in production', function() {
                     assert.ok( html.doesContain(' src="/static/js/all.js" ') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
-                    done();
+                    fs.readFile(path.join(middlewareConf.buildDir, "js", "all.js.map"), "utf8", function(err, content) {
+                        if(err) return done(err);
+                        assert.ok( content.length > 0 );
+                        done();
+                    });
                 });
             });
         });
@@ -92,7 +97,8 @@ describe('Asset Middleware in production', function() {
                 type: "requirejs",
                 dir: "js",
                 main: "app.js",
-                lib: "../lib/require.js"
+                lib: "../lib/require.js",
+                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "app.js.map")]
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
@@ -108,7 +114,11 @@ describe('Asset Middleware in production', function() {
                     assert.ok( html.doesContain(' data-main="/static/js/app"') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
-                    done();
+                    fs.readFile(path.join(middlewareConf.buildDir, "js", "app.js.map"), "utf8", function(err, content) {
+                        if(err) return done(err);
+                        assert.ok( content.length > 0 );
+                        done();
+                    });
                 })
             });
         });
