@@ -39,7 +39,7 @@ describe('Asset Middleware in production', function() {
                     "app.js",
                     "controllers/test.js"
                 ],
-                options:  ["--create_source_map", path.join(middlewareConf.buildDir, "js", "all.js.map")],
+                generateSourceMaps: true,
                 fingerprint: true
             }
         }, middlewareConf, function(err) {
@@ -56,7 +56,7 @@ describe('Asset Middleware in production', function() {
                     assert.ok( html.doesContain(' src="/static/js/'+fileName+'" ') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
-                    fs.readFile(path.join(middlewareConf.buildDir, "js", "all.js.map"), "utf8", function(err, content) {
+                    fs.readFile(path.join(middlewareConf.buildDir, "js", fileName+".map"), "utf8", function(err, content) {
                         if(err) return done(err);
                         assert.ok( content.length > 0 );
                         done();
