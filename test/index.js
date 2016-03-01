@@ -100,11 +100,18 @@ describe('Asset Middleware in production', function() {
                 type: "requirejs",
                 dir: "js",
                 main: "app.js",
-                lib: "../lib/require.js"
+                lib: "../lib/require.js",
+                fingerprint: true,
+                files: [ // for fingerpint
+                    'app.js',
+                    'controllers/test.js'
+                ]
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "js", "app.js"), "utf8", function(err, content) {
+            var md5Hash = "5451665593271599f1f3b9544ec8eaeb";
+            var fileName = md5Hash+"-app";
+            fs.readFile(path.join(middlewareConf.buildDir, "js", fileName + ".js"), "utf8", function(err, content) {
                 if(err) return done(err);
                 assert.ok( content.length > 0 );
                 var res = { locals: {} };
@@ -113,7 +120,7 @@ describe('Asset Middleware in production', function() {
                     var html = res.locals.asset("app.js");
                     assert.ok( html.doesContain('<script ') );
                     assert.ok( html.doesContain(' src="/static/lib/require.js"') );
-                    assert.ok( html.doesContain(' data-main="/static/js/app"') );
+                    assert.ok( html.doesContain(' data-main="/static/js/'+fileName+'"') );
                     assert.ok( html.doesContain(' type="text/javascript"') );
                     assert.ok( html.doesContain('</script>') );
                     done();
