@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: '.',
     paths: {
-        'jquery': '../lib/jquery.test'
+        'jquery': '../../lib/jquery.test'
     }
 });
 

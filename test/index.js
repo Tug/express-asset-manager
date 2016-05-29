@@ -1,23 +1,17 @@
-var assert = require('assert');
+var chai = require('chai');
+var expect = chai.expect;
 var fs = require('fs-extra');
 var path = require('path');
 var libRoot = path.join(__dirname, '..');
 var outputDir = path.join(libRoot, "test/builtAssets");
 
-
-String.prototype.doesContain = function(subString) {
-    return this.indexOf(subString) !== -1;
-};
-
-String.prototype.doesNotContain = function(subString) {
-    return !this.doesContain(subString);
-};
-
-String.prototype.occurences = function(subString) {
-    return (this.match(new RegExp(subString,"g")) || []).length;
-};
+chai.use(require('chai-string'));
 
 describe('Asset Middleware in production', function() {
+
+    after(function(done) {
+        fs.remove(outputDir, done);
+    });
 
     var expressAssetMiddleware = require(path.join(libRoot, 'lib/index'));
 
@@ -27,15 +21,15 @@ describe('Asset Middleware in production', function() {
         srcDir      : path.join(__dirname, "public"),
         buildDir    : path.join(__dirname, "builtAssets")
     };
-
+/*
     it('should process JS assets using concatenation and minification in production', function(done) {
         var middleware = expressAssetMiddleware({
             "all.js": {
                 type: "js",
-                dir: "js",
+                dir: "app/js",
                 files: [
-                    "../lib/require.js",
-                    "../lib/jquery.test.js",
+                    "../../lib/require.js",
+                    "../../lib/jquery.test.js",
                     "app.js",
                     "controllers/test.js"
                 ],
@@ -44,21 +38,21 @@ describe('Asset Middleware in production', function() {
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            var md5Hash = "4057a108527a98e65a6b72ae786a3463";
+            var md5Hash = "7584fbbd002cc967a4ec068ed08e2216";
             var fileName = md5Hash+"-all.js";
-            fs.readFile(path.join(middlewareConf.buildDir, "js", fileName), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "js", fileName), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("all.js");
-                    assert.ok( html.doesContain('<script ') );
-                    assert.ok( html.doesContain(' src="/static/js/'+fileName+'" ') );
-                    assert.ok( html.doesContain(' type="text/javascript"') );
-                    assert.ok( html.doesContain('</script>') );
-                    fs.readFile(path.join(middlewareConf.buildDir, "js", fileName+".map"), "utf8", function(err, content) {
+                    expect( html ).to.have.string('<script ');
+                    expect( html ).to.have.string(' src="/static/app/js/'+fileName+'" ');
+                    expect( html ).to.have.string(' type="text/javascript"');
+                    expect( html ).to.have.string('</script>');
+                    fs.readFile(path.join(middlewareConf.buildDir, "app", "js", fileName+".map"), "utf8", function(err, content) {
                         if(err) return done(err);
-                        assert.ok( content.length > 0 );
+                        expect( content ).to.have.length.above(0);
                         done();
                     });
                 });
@@ -70,7 +64,7 @@ describe('Asset Middleware in production', function() {
         var middleware = expressAssetMiddleware({
             "all.css": {
                 type: "css",
-                dir: "css",
+                dir: "app/css",
                 files: [
                     "style.css",
                     "style-responsive.css"
@@ -78,16 +72,16 @@ describe('Asset Middleware in production', function() {
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "css", "all.css"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "css", "all.css"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("all.css");
-                    assert.ok( html.doesContain('<link ') );
-                    assert.ok( html.doesContain(' href="/static/css/all.css" ') );
-                    assert.ok( html.doesContain(' rel="stylesheet"') );
-                    assert.ok( html.doesContain(' type="text/css"') );
+                    expect( html ).to.have.string( '<link ' );
+                    expect( html ).to.have.string( ' href="/static/app/css/all.css" ' );
+                    expect( html ).to.have.string( ' rel="stylesheet"' );
+                    expect( html ).to.have.string( ' type="text/css"' );
                     done();
                 });
             });
@@ -98,24 +92,24 @@ describe('Asset Middleware in production', function() {
         var middleware = expressAssetMiddleware({
             "app.js" : {
                 type: "requirejs",
-                dir: "js",
+                dir: "app/js",
                 main: "app.js",
-                lib: "../lib/require.js"
+                lib: "../../lib/require.js"
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "js", "app.js"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "js", "app.js"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     if(err) return done(err);
                     var html = res.locals.asset("app.js");
-                    assert.ok( html.doesContain('<script ') );
-                    assert.ok( html.doesContain(' src="/static/lib/require.js"') );
-                    assert.ok( html.doesContain(' data-main="/static/js/app"') );
-                    assert.ok( html.doesContain(' type="text/javascript"') );
-                    assert.ok( html.doesContain('</script>') );
+                    expect( html ).to.have.string( '<script ' );
+                    expect( html ).to.have.string( ' src="/static/lib/require.js"' );
+                    expect( html ).to.have.string( ' data-main="/static/app/js/app"' );
+                    expect( html ).to.have.string( ' type="text/javascript"' );
+                    expect( html ).to.have.string( '</script>' );
                     done();
                 });
             });
@@ -126,29 +120,29 @@ describe('Asset Middleware in production', function() {
         var middleware = expressAssetMiddleware({
             "app2.js" : {
                 type: "requirejs",
-                dir: "js",
+                dir: "app/js",
                 main: "app-withoutconfig.js",
                 mainConfigFile: "config.js",
-                lib: "../lib/require.js",
+                lib: "../../lib/require.js",
                 includeLib: true,
                 attributes: [ "async" ]
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "js", "app2.js"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "js", "app2.js"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     if(err) return done(err);
                     var html = res.locals.asset("app2.js");
-                    assert.ok( html.doesContain('<script ') );
-                    assert.ok( html.doesContain(' src="/static/js/app2.js"') );
-                    assert.ok( html.doesContain(' async ') );
-                    assert.ok( html.doesNotContain(' data-main="app"') );
-                    assert.ok( html.doesNotContain(' src="/static/lib/require.js"') );
-                    assert.ok( html.doesContain(' type="text/javascript"') );
-                    assert.ok( html.doesContain('</script>') );
+                    expect( html ).to.have.string( '<script ' );
+                    expect( html ).to.have.string( ' src="/static/app/js/app2.js"' );
+                    expect( html ).to.have.string( ' async ' );
+                    expect( html ).to.not.have.string( ' data-main="app"' );
+                    expect( html ).to.not.have.string( ' src="/static/lib/require.js"' );
+                    expect( html ).to.have.string( ' type="text/javascript"' );
+                    expect( html ).to.have.string( '</script>' );
                     done();
                 });
             });
@@ -165,23 +159,23 @@ describe('Asset Middleware in production', function() {
         var middleware = expressAssetMiddleware({
             "app3.js" : {
                 type: "requirejs",
-                dir: "js",
+                dir: "app/js",
                 main: "app.js",
-                lib: "../lib/require.js"
+                lib: "../../lib/require.js"
             }
         }, middlewareCustomConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareCustomConf.buildDir, "js", "app3.js"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareCustomConf.buildDir, "app", "js", "app3.js"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("app3.js");
-                    assert.ok( html.doesContain('<script ') );
-                    assert.ok( html.doesContain(' src="http://files.mydomain.com/static/lib/require.js"') );
-                    assert.ok( html.doesContain(' data-main="http://files.mydomain.com/static/js/app"') );
-                    assert.ok( html.doesContain(' type="text/javascript"') );
-                    assert.ok( html.doesContain('</script>') );
+                    expect( html ).to.have.string( '<script ' );
+                    expect( html ).to.have.string( ' src="http://files.mydomain.com/static/lib/require.js"' );
+                    expect( html ).to.have.string( ' data-main="http://files.mydomain.com/static/app/js/app"' );
+                    expect( html ).to.have.string( ' type="text/javascript"' );
+                    expect( html ).to.have.string( '</script>' );
                     done();
                 });
             });
@@ -192,49 +186,54 @@ describe('Asset Middleware in production', function() {
         var middleware = expressAssetMiddleware({
             "ui.css": {
                 type: "requirejs-css",
-                dir: "css",
+                dir: "app/css",
                 main: "style.css"
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "css", "ui.css"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "css", "ui.css"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("ui.css");
-                    assert.ok( html.doesContain('<link ') );
-                    assert.ok( html.doesContain(' href="/static/css/ui.css" ') );
-                    assert.ok( html.doesContain(' rel="stylesheet"') );
-                    assert.ok( html.doesContain(' type="text/css"') );
+                    expect( html ).to.have.string( '<link ' );
+                    expect( html ).to.have.string( ' href="/static/app/css/ui.css" ' );
+                    expect( html ).to.have.string( ' rel="stylesheet"' );
+                    expect( html ).to.have.string( ' type="text/css"' );
                     done();
                 });
             });
         });
     });
-
+*/
     it('should process Less assets with lessc in production', function(done) {
         var middleware = expressAssetMiddleware({
             "ui2.css": {
                 type: "less",
-                dir: "less",
-                main: "style.less"
+                dir: "app/less",
+                main: "style.less",
+                env: {
+                    relativeUrls: true
+                }
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
-            fs.readFile(path.join(middlewareConf.buildDir, "less", "ui2.css"), "utf8", function(err, content) {
+            fs.readFile(path.join(middlewareConf.buildDir, "app", "less", "ui2.css"), "utf8", function(err, content) {
                 if(err) return done(err);
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 // ensure css files were also inlined
-                assert.ok( content.doesNotContain('@import') );
+                expect( content ).to.not.have.string( '@import' );
+                // ensure relative paths in css interpreted as less files were rewritten
+                expect( content ).to.have.string( 'url(../../common/font/google-opensans/uYKcPVoh6c5R0NpdEY5A-Q.woff)' );
                 var res = { locals: {} };
                 middleware({}, res, function(err) {
                     var html = res.locals.asset("ui2.css");
-                    assert.ok( html.doesContain('<link ') );
-                    assert.ok( html.doesContain(' href="/static/less/ui2.css" ') );
-                    assert.ok( html.doesNotContain(' rel="stylesheet/less"') );
-                    assert.ok( html.doesContain(' rel="stylesheet"') );
-                    assert.ok( html.doesContain(' type="text/css"') );
+                    expect( html ).to.have.string( '<link ' );
+                    expect( html ).to.have.string( ' href="/static/app/less/ui2.css" ' );
+                    expect( html ).to.not.have.string( ' rel="stylesheet/less"' );
+                    expect( html ).to.have.string( ' rel="stylesheet"' );
+                    expect( html ).to.have.string( ' type="text/css"' );
                     done();
                 });
             });
@@ -247,26 +246,21 @@ describe('Asset Middleware in production', function() {
             rootRoute   : "/static",
             srcDir      : "./test/public",
             buildDir    : "./test/builtAssets",
-            copy        : [ "img", "font" ]
+            copy        : [ "img", "common" ]
         };
         var middleware = expressAssetMiddleware({}, middlewareCustomConf, function(err) {
             if(err) return done(err);
             var image = path.join(middlewareCustomConf.buildDir, "img", "subdir", "pixel.png");
-            var font = path.join(middlewareCustomConf.buildDir, "font", "nofonthere.ttf");
+            var font = path.join(middlewareCustomConf.buildDir, "common", "font", "nofonthere.ttf");
             fs.readFile(image, "utf8", function(err, content) {
-                assert.ok( content.length > 0 );
+                expect( content ).to.have.length.above(0);
                 fs.readFile(font, "utf8", function(err, content) {
-                    assert.ok( content.length > 0 );
+                    expect( content ).to.have.length.above(0);
                     done();
                 });
             });
         });
     });
-
-    after(function(done) {
-        fs.remove(outputDir, done);
-    });
-
 });
 
 
@@ -286,10 +280,10 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "all.js": {
                 type: "js",
-                dir: "js",
+                dir: "app/js",
                 files: [
-                    "../lib/require.js",
-                    "../lib/jquery.test.js",
+                    "../../lib/require.js",
+                    "../../lib/jquery.test.js",
                     "app.js",
                     "config.js",
                     "controllers/test.js"
@@ -300,14 +294,14 @@ describe('Asset Middleware in development', function() {
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("all.js");
-                assert.ok( html.occurences("<script ") === 5 );
-                assert.ok( html.doesContain(' src="/static/lib/require.js"') );
-                assert.ok( html.doesContain(' src="/static/lib/jquery.test.js"') );
-                assert.ok( html.doesContain(' src="/static/js/app.js"') );
-                assert.ok( html.doesContain(' src="/static/js/config.js"') );
-                assert.ok( html.doesContain(' src="/static/js/controllers/test.js"') );
-                assert.ok( html.occurences(' type="text/javascript"') === 5 );
-                assert.ok( html.occurences("<\/script>") === 5 );
+                expect( html ).to.have.entriesCount( "<script ", 5 );
+                expect( html ).to.have.string( ' src="/static/lib/require.js"' );
+                expect( html ).to.have.string( ' src="/static/lib/jquery.test.js"' );
+                expect( html ).to.have.string( ' src="/static/app/js/app.js"' );
+                expect( html ).to.have.string( ' src="/static/app/js/config.js"' );
+                expect( html ).to.have.string( ' src="/static/app/js/controllers/test.js"' );
+                expect( html ).to.have.entriesCount( ' type="text/javascript"', 5 );
+                expect( html ).to.have.entriesCount( "<\/script>", 5 );
                 done();
             });
         });
@@ -317,7 +311,7 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "all.css": {
                 type: "css",
-                dir: "css",
+                dir: "app/css",
                 files: [
                     "style.css",
                     "style-responsive.css"
@@ -328,10 +322,10 @@ describe('Asset Middleware in development', function() {
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("all.css");
-                assert.ok( html.occurences("<link ") === 2 );
-                assert.ok( html.doesContain(' href="/static/css/style.css" ') );
-                assert.ok( html.doesContain(' href="/static/css/style-responsive.css" ') );
-                assert.ok( html.occurences(' type="text/css"') === 2 );
+                expect( html ).to.have.entriesCount( "<link ", 2 );
+                expect( html ).to.have.string( ' href="/static/app/css/style.css" ' );
+                expect( html ).to.have.string( ' href="/static/app/css/style-responsive.css" ' );
+                expect( html ).to.have.entriesCount( ' type="text/css"', 2 );
                 done();
             });
         });
@@ -341,23 +335,23 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "app.js" : {
                 type: "requirejs",
-                dir: "js",
+                dir: "app/js",
                 main: "app",
                 mainConfigFile: "config.js",
-                lib: "../lib/require.js"
+                lib: "../../lib/require.js"
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("app.js");
-                assert.ok( html.occurences("<script ") === 2 );
-                assert.ok( html.doesContain(' src="/static/lib/require.js"') );
-                assert.ok( html.doesContain(' data-main="/static/js/app"') );
-                assert.ok( html.doesContain(' src="/static/js/config.js" ') );
-                assert.ok( html.doesContain(' type="text/javascript"') );
-                assert.ok( html.occurences(' type="text/javascript"') === 2 );
-                assert.ok( html.occurences("<\/script>") === 2 );
+                expect( html ).to.have.entriesCount( "<script ", 2 );
+                expect( html ).to.have.string( ' src="/static/lib/require.js"' );
+                expect( html ).to.have.string( ' data-main="/static/app/js/app"' );
+                expect( html ).to.have.string( ' src="/static/app/js/config.js" ' );
+                expect( html ).to.have.string( ' type="text/javascript"' );
+                expect( html ).to.have.entriesCount( ' type="text/javascript"', 2 );
+                expect( html ).to.have.entriesCount( "<\/script>", 2 );
                 done();
             });
         });
@@ -373,22 +367,22 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "app3.js" : {
                 type: "requirejs",
-                dir: "js",
+                dir: "app/js",
                 main: "app",
                 mainConfigFile: "config.js",
-                lib: "../lib/require.js"
+                lib: "../../lib/require.js"
             }
         }, middlewareCustomConf, function(err) {
             if(err) return done(err);
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("app3.js");
-                assert.ok( html.occurences("<script ") === 2 );
-                assert.ok( html.doesContain(' src="http://files.mydomain.com/static/lib/require.js"') );
-                assert.ok( html.doesContain(' data-main="http://files.mydomain.com/static/js/app"') );
-                assert.ok( html.doesContain(' src="http://files.mydomain.com/static/js/config.js"') );
-                assert.ok( html.occurences(' type="text/javascript"') === 2 );
-                assert.ok( html.occurences("<\/script>") === 2 );
+                expect( html ).to.have.entriesCount( "<script ", 2 );
+                expect( html ).to.have.string( ' src="http://files.mydomain.com/static/lib/require.js"' );
+                expect( html ).to.have.string( ' data-main="http://files.mydomain.com/static/app/js/app"' );
+                expect( html ).to.have.string( ' src="http://files.mydomain.com/static/app/js/config.js"' );
+                expect( html ).to.have.entriesCount( ' type="text/javascript"', 2 );
+                expect( html ).to.have.entriesCount( "<\/script>", 2 );
                 done();
             });
         });
@@ -398,7 +392,7 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "ui.css": {
                 type: "requirejs-css",
-                dir: "css",
+                dir: "app/css",
                 main: "style.css"
             }
         }, middlewareConf, function(err) {
@@ -406,10 +400,10 @@ describe('Asset Middleware in development', function() {
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("ui.css");
-                assert.ok( html.occurences("<link ") === 1 );
-                assert.ok( html.doesContain(' href="/static/css/style.css"') );
-                assert.ok( html.doesContain(' type="text/css"') );
-                assert.ok( html.doesContain(' rel="stylesheet"') );
+                expect( html ).to.have.entriesCount( "<link ", 1 );
+                expect( html ).to.have.string( ' href="/static/app/css/style.css"' );
+                expect( html ).to.have.string( ' type="text/css"' );
+                expect( html ).to.have.string( ' rel="stylesheet"' );
                 done();
             });
         });
@@ -419,23 +413,23 @@ describe('Asset Middleware in development', function() {
         var middleware = expressAssetMiddleware({
             "ui2.css": {
                 type: "less",
-                dir: "less",
+                dir: "app/less",
                 main: "style.less",
-                lib: "../lib/less.js"
+                lib: "../../lib/less.js"
             }
         }, middlewareConf, function(err) {
             if(err) return done(err);
             var res = { locals: {} };
             middleware({}, res, function(err) {
                 var html = res.locals.asset("ui2.css");
-                assert.ok( html.doesContain('<link ') );
-                assert.ok( html.doesContain(' href="/static/less/style.less" ') );
-                assert.ok( html.doesContain(' rel="stylesheet/less"') );
-                assert.ok( html.doesContain(' type="text/css"') );
-                assert.ok( html.occurences("<script ") === 1 );
-                assert.ok( html.doesContain(' src="/static/lib/less.js"') );
-                assert.ok( html.occurences(' type="text/javascript"') === 1 );
-                assert.ok( html.occurences("<\/script>") === 1 );
+                expect( html ).to.have.string( '<link ' );
+                expect( html ).to.have.string( ' href="/static/app/less/style.less" ' );
+                expect( html ).to.have.string( ' rel="stylesheet/less"' );
+                expect( html ).to.have.string( ' type="text/css"' );
+                expect( html ).to.have.entriesCount( "<script ", 1 );
+                expect( html ).to.have.string( ' src="/static/lib/less.js"' );
+                expect( html ).to.have.entriesCount( ' type="text/javascript"', 1 );
+                expect( html ).to.have.entriesCount( "<\/script>", 1 );
                 done();
             });
         });
