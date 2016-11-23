@@ -2,10 +2,10 @@
   "name": "express-asset-manager",
   "description": "Simple asset manager middleware for Express.js",
   "version": "1.0.3",
-  "homepage": "https://github.com/ku3mich/express-asset-manager",
+  "homepage": "https://github.com/Tug/express-asset-manager",
   "repository": {
     "type": "git",
-    "url": "http://github.com/ku3mich/express-asset-manager.git"
+    "url": "http://github.com/Tug/express-asset-manager.git"
   },
   "author": "Tugdual de Kerviler <dekervit@gmail.com>",
   "main": "./lib/index.js",
